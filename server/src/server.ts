@@ -30,7 +30,7 @@ async function bootstrap() {
     })
 
     // Servidor rodando na porta 3333, o host: 0.0.0.0 é para o mobile poder consumir
-    await fastify.listen({ port: 3333, host: '0.0.0.0' })
+    await fastify.listen({ port: 3333, /*host: '0.0.0.0'*/ })
 }
 
 bootstrap()
