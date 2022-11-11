@@ -1,12 +1,12 @@
 import Fastify from 'fastify'
-import { PrismaClient } from '@prisma/client'
 import cors from '@fastify/cors'
-import { z } from 'zod'
-import ShortUniqueId from 'short-unique-id'
+import jwt from '@fastify/jwt'
 
-const prisma = new PrismaClient({
-    log: ['query'],
-})
+import { poolRoutes } from './routes/pool'
+import { authRoutes } from './routes/auth'
+import { gameRoutes } from './routes/game'
+import { guessRoutes } from './routes/guess'
+import { userRoutes } from './routes/user'
 
 async function bootstrap() {
     const fastify = Fastify({
@@ -22,56 +22,17 @@ async function bootstrap() {
         origin: true
     })
 
-    // Mostra o número de bolões
-    fastify.get('/pools/count', async () => {
-
-        // conta quantos dados existem na tabela 'pool' -> númeor de bolões criados
-        const count = await prisma.pool.count()
-
-        return { count }
+    // Em produção isso precisa ser uma variável ambiente
+    await fastify.register(jwt,{
+        secret: 'nlwcopa'
     })
 
-    // Conta os usuários
-    fastify.get('/users/count', async () => {
-
-        // conta quantos dados existem na tabela 'pool' -> númeor de bolões criados
-        const count = await prisma.user.count()
-
-        return { count }
-    })
-
-    //
-    fastify.get('/guesses/count', async () => {
-
-        // conta quantos dados existem na tabela 'pool' -> númeor de bolões criados
-        const count = await prisma.guess.count()
-
-        return { count }
-    })
-
-    // Criar bolão
-    fastify.post('/pools', async (request, reply) => {
-
-        // Uso da lib zod
-        const createPoolBody = z.object({
-            title: z.string()
-        })
-
-        const { title } = createPoolBody.parse(request.body)
-
-        // Gera um código de 6 caracteres
-        const generate = new ShortUniqueId({ length: 6 })
-        const code = String(generate()).toUpperCase() // Deixa o código em caixa alta
-
-        await prisma.pool.create({
-            data: {
-                title,
-                code
-            }
-        })
-
-        return reply.status(201).send({ code })
-    })
+    // Rotas da API
+    await fastify.register(poolRoutes)
+    await fastify.register(authRoutes)
+    await fastify.register(gameRoutes)
+    await fastify.register(guessRoutes)
+    await fastify.register(userRoutes)
 
     // Servidor rodando na porta 3333, o host: 0.0.0.0 é para o mobile poder consumir
     await fastify.listen({ port: 3333, /*host: '0.0.0.0'*/ })
