@@ -1,4 +1,4 @@
-import {Platform} from 'react-native'
+import { Platform } from 'react-native'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
@@ -8,6 +8,7 @@ import { useTheme } from 'native-base'
 
 import { New } from '../screens/New'
 import { Pools } from '../screens/Pools'
+import { Find } from '../screens/Find'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -38,7 +39,7 @@ export function AppRoutes() {
                 name='new'
                 component={New}
                 options={{
-                    tabBarIcon: ({ color }) => <PlusCircle color={color} size={size}/>,
+                    tabBarIcon: ({ color }) => <PlusCircle color={color} size={size} />,
                     tabBarLabel: "Novo bolão"
                 }}
             />
@@ -47,9 +48,15 @@ export function AppRoutes() {
                 name='pools'
                 component={Pools}
                 options={{
-                    tabBarIcon: ({ color }) => <SoccerBall color={color} size={size}/>,
+                    tabBarIcon: ({ color }) => <SoccerBall color={color} size={size} />,
                     tabBarLabel: "Meus bolões"
                 }}
+            />
+
+            <Screen
+                name='find'
+                component={Find}
+                options={{ tabBarButton: () => null }}
             />
         </Navigator>
     )
